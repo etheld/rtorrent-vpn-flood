@@ -1,0 +1,22 @@
+#!/bin/sh
+iptables -F INPUT
+iptables -F FORWARD
+iptables -F OUTPUT
+iptables -F
+
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT DROP
+
+if [ $(ifconfig -a | grep -c 'inet6') -eq 0 ]; then
+	exit 0
+fi
+
+ip6tables -F INPUT
+ip6tables -F FORWARD
+ip6tables -F OUTPUT
+ip6tables -F
+
+ip6tables -P INPUT DROP
+ip6tables -P FORWARD DROP
+ip6tables -P OUTPUT DROP
