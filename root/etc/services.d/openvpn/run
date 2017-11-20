@@ -1,14 +1,9 @@
-#!/usr/bin/execlineb -P
+#!/usr/bin/with-contenv sh
 
-s6-setuidgid openvpn
-
-redirfd -a 2 /var/log/openvpn/stderr.log
-
-/usr/sbin/openvpn
-	--writepid /var/run/openvpn/pid
-	--log-append /var/log/openvpn/stdout.log
-	--config /mnt/openvpn/config.ovpn
-	--auth-user-pass /mnt/openvpn/login.conf
-	--auth-nocache
-	--dev tun0 --persist-tun
-	--iproute /usr/sbin/ip-su
+s6-setuidgid abc exec /usr/sbin/openvpn \
+	--writepid /config/openvpn/pid \
+	--config ${OPENVPN_CONFIG} \
+	--auth-user-pass /config/openvpn-credentials.txt \
+	--auth-nocache \
+	--dev tun0 --persist-tun \
+	--iproute /usr/sbin/ip-su 

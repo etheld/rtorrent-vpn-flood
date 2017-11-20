@@ -1,0 +1,13 @@
+#!/usr/bin/with-contenv bash
+
+mkdir -p \
+    /config/{/rtorrent,/log/rtorrent,/flood,/rtorrent/session,/openvpn}
+
+# delete lock file if exists
+[[ -e /config/rtorrent/session/rtorrent.lock ]] && \
+	rm /config/rtorrent/session/rtorrent.lock
+
+[[ ! -e /config/rtorrent/rtorrent.rc ]] && \
+	cp /defaults/rtorrent.rc /config/rtorrent/rtorrent.rc
+
+chown -R abc /config /data

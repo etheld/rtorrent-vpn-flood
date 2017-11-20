@@ -1,3 +1,2 @@
 #!/usr/bin/execlineb -S0
-redirfd -a 2 /dev/null
-s6-svscanctl -t /var/run/s6/services
+#redirfd -a 2 /dev/null s6-svscanctl -t /var/run/s6/services

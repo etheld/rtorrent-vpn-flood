@@ -1,0 +1,8 @@
+#!/usr/bin/with-contenv bash
+
+until [ -e "/config/log/rtorrent/rtorrent.log" ];
+do
+sleep 1s
+done
+
+tail -n 1 -f /config/log/rtorrent/rtorrent.log

@@ -1,0 +1,16 @@
+#!/usr/bin/with-contenv sh
+
+if [ ! -e "${OPENVPN_CONFIG}" ]; then
+	printf "ERROR: '%s' not mounted\n" "${OPENVPN_CONFIG}"
+	exit 1
+fi
+
+rules='/tmp/ipv4-rules'
+
+proto=$(awk '/proto / { print $2 }' "${OPENVPN_CONFIG}")
+host=$(awk '/remote / { print $2 }' "${OPENVPN_CONFIG}")
+port=$(awk '/remote / { print $3 }' "${OPENVPN_CONFIG}")
+
+cat '/etc/iptables/rules' > "${rules}"
+
+sed "s/{PROTO}/${proto}/g; s/{HOST}/${host}/g; s/{PORT}/${port}/g" "${rules}" | iptables-restore

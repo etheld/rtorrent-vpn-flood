@@ -3,10 +3,19 @@
 :FORWARD DROP [0:0]
 :OUTPUT DROP [0:0]
 
+#-N LOGGING
+#-A OUTPUT -j LOGGING
+#-A INPUT -j LOGGING
+#-A LOGGING -j ULOG
+#-A LOGGING -m limit --limit 2/min -j LOG --log-prefix "IPTables-Dropped: " --log-level 4
+
 -A INPUT -m state --state INVALID -j DROP
 -A INPUT -p tcp -m tcp --tcp-flags FIN,SYN FIN,SYN -j DROP
 -A INPUT -p tcp -m tcp --tcp-flags SYN,RST SYN,RST -j DROP
 -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+-A INPUT -i lo -j ACCEPT
+-A INPUT -j REJECT --reject-with icmp-port-unreachable
 
 -A OUTPUT -m state --state INVALID -j DROP
 -A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
@@ -16,7 +25,27 @@
 -A OUTPUT -o lo -j ACCEPT
 -A OUTPUT -j REJECT --reject-with icmp-port-unreachable
 
--A INPUT -i lo -j ACCEPT
--A INPUT -j REJECT --reject-with icmp-port-unreachable
-
 COMMIT
+
+# Allow basic INPUT traffic.
+#-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+#-A INPUT -i lo -j ACCEPT
+#-A INPUT -p icmp --icmp-type 8 -m conntrack --ctstate NEW -j ACCEPT
+#-A INPUT -m state --state INVALID -j DROP
+
+# Allow basic OUTPUT traffic.
+#-A OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+#-A OUTPUT -o lo -j ACCEPT
+#-A OUTPUT -p icmp -j ACCEPT
+#-A OUTPUT -m state --state INVALID -j DROP
+
+# Allow traffic to the OpenVPN server and via the tunnel.
+#-A OUTPUT -o tun+ -j ACCEPT
+#-A OUTPUT -o eth+ -p {PROTO} -m {PROTO} -d {HOST} --dport {PORT} -j ACCEPT
+
+# Reject everything else.
+#-A INPUT -m conntrack --ctstate INVALID -j DROP
+#-A INPUT -j REJECT --reject-with icmp-port-unreachable
+#-A FORWARD -j REJECT --reject-with icmp-port-unreachable
+#-A OUTPUT -j REJECT --reject-with icmp-port-unreachable
+#COMMIT

@@ -1,5 +1,5 @@
 #!/bin/sh
-echo `whoami`
+
 iptables -F INPUT
 iptables -F FORWARD
 iptables -F OUTPUT
