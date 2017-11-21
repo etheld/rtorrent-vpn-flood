@@ -1,17 +1,5 @@
 #!/usr/bin/with-contenv sh
 
-
-mkdir -p \
-	'/var/log/openvpn' \
-	'/var/run/openvpn'
-
-chown -fR abc:abc '/var/log/openvpn' '/var/run/openvpn' || :
-
-chmod -fR a=,u+rX '/mnt/openvpn' || :
-
-chmod -fR a=,ug+rwX '/var/log/openvpn' '/var/run/openvpn' || :
-
-
 /usr/sbin/openvpn --mktun --dev 'tun0' --dev-type 'tun' --user 'abc' --group 'abc'  > '/dev/null'
 
 usermod -G netdev abc

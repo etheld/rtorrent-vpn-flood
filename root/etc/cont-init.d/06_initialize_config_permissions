@@ -10,4 +10,6 @@ mkdir -p \
 [[ ! -e /config/rtorrent/rtorrent.rc ]] && \
 	cp /defaults/rtorrent.rc /config/rtorrent/rtorrent.rc
 
+dockerize -template /defaults/flood.config.js:/flood/config.js
+
 chown -R abc /config /data
