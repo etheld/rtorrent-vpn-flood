@@ -32,6 +32,37 @@ COPY root/ /
 ARG BUILD_DATE
 ARG VCS_REF
 
-EXPOSE 3000
+#RUN cd /flood && npm install && npm run build
+#RUN cd /flood && npm install --production && npm run build
+#EXPOSE 3000
 
-LABEL org.label-schema.vcs-ref=$VCS_REF org.label-schema.build-date=$BUILD_DATE
+#RUN apk del --virtual build-dependencies
+#RUN s6-rmrf /etc/s6/services/s6-fdholderd/down
+
+#RUN apk add --no-cache ulogd
+# RUN apk --no-cache add yarn nodejs-npm
+# RUN cd /flood && yarn install
+
+#VOLUME [ "/data", "/config" ]
+#COPY root/ /
+#RUN apk del --virtual build-dependencies
+#RUN s6-rmrf /etc/s6/services/s6-fdholderd/down
+
+#RUN apk add -t build-dependencies build-base git libtool automake autoconf wget tar xz zlib-dev cppunit-dev libressl-dev ncurses-dev curl-dev binutils linux-headers file && \
+    git clone https://github.com/rakshasa/rtorrent && \
+    git clone https://github.com/rakshasa/libtorrent && \
+    git clone https://github.com/mirror/xmlrpc-c.git && \
+    cd /libtorrent && ./autogen.sh && ./configure && make -j 6 && make install && \
+    cd /xmlrpc-c/stable && ./configure && make -j 6 && make install && \
+    cd /rtorrent && ./autogen.sh && ./configure --with-xmlrpc-c && make -j 6 && make install && \
+    strip -s /usr/local/bin/rtorrent && \
+    strip -s /usr/local/bin/mediainfo && \
+    apk del build-dependencies && \
+    rm -rf /var/cache/apk/* /tmp/*
+
+# RUN apk --no-cache add yarn nodejs-npm
+# RUN cd /flood && yarn install
+
+VOLUME [ "/data", "/config" ]
+COPY root/ /
+#LABEL org.label-schema.vcs-ref=$VCS_REF org.label-schema.build-date=$BUILD_DATE
